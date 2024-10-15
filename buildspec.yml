@@ -1,0 +1,26 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_DEFAULT_REGION: "ap-northeast-1"
+    DOCKER_USER: AWS
+    REPOSITORY_URI: "<ECRのURIをコピーする>"
+    IMAGE_NAME: <作成した>
+# phasesにはあとinstallがある
+phases:
+  pre_build:
+    commands:
+      - echo "ECRへログイン"
+      #codeBuildからECRへのログインは不要だた、CodeBuild以外でも使えるようにするため記載
+      # - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username $DOCKER_USER --password-stdin $REPOSITORY_URI
+  build:
+    commands:
+      - echo "ビルド開始"
+      # - docker build -t "$REPOSITORY_URI/$IMAGE_NAME:latest" .
+  post_build:
+    commands:
+      - echo "ECRへpush"
+      # - docker push "$REPOSITORY_URI/$IMAGE_NAME:latest"
+      # - printf '{"Version":"1.0","ImageURI":"%s"}' $REPOSITORY_URI/$IMAGE_NAME:$IMAGE_TAG > imageDetail.json
+artifacts:
+  files: imageDetail.json
