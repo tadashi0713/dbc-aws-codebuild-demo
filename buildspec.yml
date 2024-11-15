@@ -10,12 +10,9 @@ env:
 phases:
   build:
     commands:
-      - echo "コード変更しました3"
-      # - docker build -t "$REPOSITORY_URI/$IMAGE_NAME:latest" .
+      - docker build .
+
   post_build:
     commands:
       - echo "ECRへpush"
       # - docker push "$REPOSITORY_URI/$IMAGE_NAME:latest"
-      # - printf '{"Version":"1.0","ImageURI":"%s"}' $REPOSITORY_URI/$IMAGE_NAME:$IMAGE_TAG > imageDetail.json
-artifacts:
-  files: imageDetail.json
