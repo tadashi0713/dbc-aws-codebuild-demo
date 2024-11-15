@@ -10,7 +10,7 @@ env:
 phases:
   build:
     commands:
-      - docker build .
+      - docker buildx build .
 
   post_build:
     commands:
