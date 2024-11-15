@@ -8,9 +8,13 @@ env:
     IMAGE_NAME: app
 
 phases:
+  pre_build:
+    commands:
+      - echo "$DOCKER_PAT" | docker login --username $DOCKER_USER --password-stdin
+
   build:
     commands:
-      - docker buildx build .
+      - docker buildx build --platform linux/amd64,linux/arm64 .
 
   post_build:
     commands:
