@@ -6,15 +6,18 @@ env:
     DOCKER_USER: AWS
     REPOSITORY_URI: "<ECRのURIをコピーする>"
     IMAGE_NAME: app
+  secrets-manager:
+    DOCKER_USER: ${SECRETS_NAME}:DOCKER_USER
+    DOCKER_PAT: ${SECRETS_NAME}:DOCKER_PAT
 
 phases:
-  # pre_build:
-  #   commands:
-  #     - echo "$DOCKER_PAT" | docker login --username $DOCKER_USER --password-stdin
+  pre_build:
+    commands:
+      - echo "$DOCKER_PAT" | docker login --username $DOCKER_USER --password-stdin
 
   build:
     commands:
-      - docker buildx build --platform linux/amd64,linux/arm64 .
+      - docker buildx build .
 
   post_build:
     commands:
