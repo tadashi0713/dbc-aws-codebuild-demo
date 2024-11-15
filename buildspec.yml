@@ -10,7 +10,7 @@ env:
 phases:
   build:
     commands:
-      - echo "コード変更しました2"
+      - echo "コード変更しました3"
       # - docker build -t "$REPOSITORY_URI/$IMAGE_NAME:latest" .
   post_build:
     commands:
