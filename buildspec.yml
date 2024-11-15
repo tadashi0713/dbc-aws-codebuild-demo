@@ -8,9 +8,9 @@ env:
     IMAGE_NAME: app
 
 phases:
-  pre_build:
-    commands:
-      - echo "$DOCKER_PAT" | docker login --username $DOCKER_USER --password-stdin
+  # pre_build:
+  #   commands:
+  #     - echo "$DOCKER_PAT" | docker login --username $DOCKER_USER --password-stdin
 
   build:
     commands:
