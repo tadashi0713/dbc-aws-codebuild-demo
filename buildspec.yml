@@ -17,7 +17,10 @@ phases:
 
   build:
     commands:
-      - docker buildx build --builder cloud-tadashinemoto567-demo --tag .
+      - docker buildx build \
+        --builder cloud-tadashinemoto567-demo \
+        --platform linux/amd64,linux/arm64 \
+        .
 
   post_build:
     commands:
