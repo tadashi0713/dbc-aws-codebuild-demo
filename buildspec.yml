@@ -14,10 +14,11 @@ phases:
   pre_build:
     commands:
       - echo "$DOCKER_PAT" | docker login --username $DOCKER_USER --password-stdin
+      - docker buildx create --use --driver cloud tadashinemoto567/demo
 
   build:
     commands:
-      - docker buildx build . --builder cloud-tadashinemoto567-demo --platform linux/amd64,linux/arm64
+      - docker buildx build --platform linux/amd64,linux/arm64 .
 
   post_build:
     commands:
