@@ -3,6 +3,7 @@ version: 0.2
 env:
   variables:
     ARCH: amd64
+    REPOSITORY_URI: '175142243308.dkr.ecr.ap-northeast-1.amazonaws.com/tadashi0713/dbc-aws-codebuild-demo'
     DOCKER_ORG: tadashinemoto567
   secrets-manager:
     DOCKER_USER: ${SECRETS_NAME}:DOCKER_USER
@@ -20,9 +21,4 @@ phases:
 
   build:
     commands:
-      - docker buildx build --platform linux/amd64,linux/arm64 .
-
-  post_build:
-    commands:
-      - echo "ECRへpush"
-      # - docker push "$REPOSITORY_URI/$IMAGE_NAME:latest"
+      - docker buildx build --platform linux/amd64,linux/arm64 --push --tag "${REPOSITORY_URI}:latest".
