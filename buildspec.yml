@@ -12,6 +12,7 @@ env:
 phases:
   pre_build:
     commands:
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
       - BUILDX_URL=$(curl -s https://raw.githubusercontent.com/docker/actions-toolkit/main/.github/buildx-lab-releases.json | jq -r ".latest.assets[] | select(endswith(\"linux-$ARCH\"))")
       - mkdir -vp ~/.docker/cli-plugins/
       - curl --silent -L --output ~/.docker/cli-plugins/docker-buildx $BUILDX_URL
