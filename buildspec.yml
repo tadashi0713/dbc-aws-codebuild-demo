@@ -2,10 +2,8 @@ version: 0.2
 
 env:
   variables:
-    AWS_DEFAULT_REGION: "ap-northeast-1"
-    DOCKER_USER: AWS
-    REPOSITORY_URI: "<ECRのURIをコピーする>"
-    IMAGE_NAME: app
+    ARCH: amd64
+    DOCKER_ORG: tadashinemoto567
   secrets-manager:
     DOCKER_USER: ${SECRETS_NAME}:DOCKER_USER
     DOCKER_PAT: ${SECRETS_NAME}:DOCKER_PAT
@@ -13,6 +11,10 @@ env:
 phases:
   pre_build:
     commands:
+      - BUILDX_URL=$(curl -s https://raw.githubusercontent.com/docker/actions-toolkit/main/.github/buildx-lab-releases.json | jq -r ".latest.assets[] | select(endswith(\"linux-$ARCH\"))")
+      - mkdir -vp ~/.docker/cli-plugins/
+      - curl --silent -L --output ~/.docker/cli-plugins/docker-buildx $BUILDX_URL
+      - chmod a+x ~/.docker/cli-plugins/docker-buildx
       - echo "$DOCKER_PAT" | docker login --username $DOCKER_USER --password-stdin
       - docker buildx create --use --driver cloud tadashinemoto567/demo
 
