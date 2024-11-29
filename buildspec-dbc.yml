@@ -3,7 +3,8 @@ version: 0.2
 env:
   variables:
     ARCH: amd64
-    REPOSITORY_URI: '175142243308.dkr.ecr.us-east-1.amazonaws.com/tadashi-dbc-demo'
+    ECR_REGISTRY: 175142243308.dkr.ecr.us-east-1.amazonaws.com
+    ECR_REPOSITORY: tadashi-dbc-demo
     DOCKER_ORG: demotnemoto
   secrets-manager:
     DOCKER_USER: ${SECRETS_NAME}:DOCKER_USER
@@ -12,14 +13,14 @@ env:
 phases:
   pre_build:
     commands:
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 175142243308.dkr.ecr.us-east-1.amazonaws.com
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
       - BUILDX_URL=$(curl -s https://raw.githubusercontent.com/docker/actions-toolkit/main/.github/buildx-lab-releases.json | jq -r ".latest.assets[] | select(endswith(\"linux-$ARCH\"))")
       - mkdir -vp ~/.docker/cli-plugins/
       - curl --silent -L --output ~/.docker/cli-plugins/docker-buildx $BUILDX_URL
       - chmod a+x ~/.docker/cli-plugins/docker-buildx
       - echo "$DOCKER_PAT" | docker login --username $DOCKER_USER --password-stdin
-      - docker buildx create --use --driver cloud demotnemoto/demo
+      - docker buildx create --use --driver cloud $DOCKER_ORG/demo
 
   build:
     commands:
-      - docker buildx build --platform linux/amd64,linux/arm64 --push --tag "${REPOSITORY_URI}:latest" .
+      - docker buildx build --push --tag "${ECR_REGISTRY}/${ECR_REPOSITORY}:latest" .
