@@ -2,18 +2,14 @@ version: 0.2
 
 env:
   variables:
-    ARCH: amd64
-    REPOSITORY_URI: '175142243308.dkr.ecr.us-east-1.amazonaws.com/tadashi-dbc-demo'
-    DOCKER_ORG: demotnemoto
-  secrets-manager:
-    DOCKER_USER: ${SECRETS_NAME}:DOCKER_USER
-    DOCKER_PAT: ${SECRETS_NAME}:DOCKER_PAT
+    ECR_REGISTRY: 175142243308.dkr.ecr.us-east-1.amazonaws.com
+    ECR_REPOSITORY: tadashi-dbc-demo
 
 phases:
   pre_build:
     commands:
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 175142243308.dkr.ecr.us-east-1.amazonaws.com
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
 
   build:
     commands:
-      - docker build --push --tag "${REPOSITORY_URI}:latest" .
+      - docker build --push --tag "${ECR_REGISTRY}/${ECR_REPOSITORY}:latest" .
