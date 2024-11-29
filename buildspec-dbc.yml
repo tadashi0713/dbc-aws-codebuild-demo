@@ -3,8 +3,8 @@ version: 0.2
 env:
   variables:
     ARCH: amd64
-    REPOSITORY_URI: '175142243308.dkr.ecr.ap-northeast-1.amazonaws.com/tadashi0713/dbc-aws-codebuild-demo'
-    DOCKER_ORG: tadashinemoto567
+    REPOSITORY_URI: '175142243308.dkr.ecr.us-east-1.amazonaws.com/tadashi-dbc-demo'
+    DOCKER_ORG: demotnemoto
   secrets-manager:
     DOCKER_USER: ${SECRETS_NAME}:DOCKER_USER
     DOCKER_PAT: ${SECRETS_NAME}:DOCKER_PAT
@@ -18,7 +18,7 @@ phases:
       - curl --silent -L --output ~/.docker/cli-plugins/docker-buildx $BUILDX_URL
       - chmod a+x ~/.docker/cli-plugins/docker-buildx
       - echo "$DOCKER_PAT" | docker login --username $DOCKER_USER --password-stdin
-      - docker buildx create --use --driver cloud tadashinemoto567/demo
+      - docker buildx create --use --driver cloud demotnemoto/demo
 
   build:
     commands:
