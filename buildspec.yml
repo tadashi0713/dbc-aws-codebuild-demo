@@ -11,9 +11,14 @@ env:
 phases:
   pre_build:
     commands:
+      # イメージタグ
+      - IMAGE_TAG=$(echo ${CODEBUILD_RESOLVED_SOURCE_VERSION} | head -c 7)
+      # AWS ECR へのログイン
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+      # Docker へのログイン
       - echo "$DOCKER_PAT" | docker login --username $DOCKER_USER --password-stdin
 
   build:
     commands:
-      - docker build --push --tag "${ECR_REGISTRY}/${ECR_REPOSITORY}:latest" .
+      # コンテナイメージのビルド・AWS ECR へのプッシュ
+      - docker build --push --tag "${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}" .
