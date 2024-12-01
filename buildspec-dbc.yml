@@ -6,7 +6,6 @@ env:
     ECR_REGISTRY: 175142243308.dkr.ecr.us-east-1.amazonaws.com
     ECR_REPOSITORY: tadashi-dbc-demo
     DOCKER_ORG: demotnemoto
-    COMMIT_ID: ${CODEBUILD_RESOLVED_SOURCE_VERSION:0:8}
   secrets-manager:
     DOCKER_USER: ${SECRETS_NAME}:DOCKER_USER
     DOCKER_PAT: ${SECRETS_NAME}:DOCKER_PAT
@@ -14,6 +13,8 @@ env:
 phases:
   pre_build:
     commands:
+      # イメージタグ
+      - IMAGE_TAG=$(echo ${CODEBUILD_RESOLVED_SOURCE_VERSION} | head -c 7)
       # AWS ECR へのログイン
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
       # buildx のインストール
@@ -29,4 +30,4 @@ phases:
   build:
     commands:
       # コンテナイメージのビルド・AWS ECR へのプッシュ
-      - docker buildx build --push --tag "${ECR_REGISTRY}/${ECR_REPOSITORY}:${COMMIT_ID}" .
+      - docker buildx build --platform linux/amd64,linux/arm64 --push --tag "${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}" .
