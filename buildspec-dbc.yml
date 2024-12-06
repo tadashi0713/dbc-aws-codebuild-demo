@@ -11,17 +11,18 @@ env:
     DOCKER_PAT: ${SECRETS_NAME}:DOCKER_PAT
 
 phases:
-  pre_build:
+  install:
     commands:
-      # イメージタグ
-      - IMAGE_TAG=$(echo ${CODEBUILD_RESOLVED_SOURCE_VERSION} | head -c 7)
-      # AWS ECR へのログイン
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
       # buildx のインストール
       - BUILDX_URL=$(curl -s https://raw.githubusercontent.com/docker/actions-toolkit/main/.github/buildx-lab-releases.json | jq -r ".latest.assets[] | select(endswith(\"linux-$ARCH\"))")
       - mkdir -vp ~/.docker/cli-plugins/
       - curl --silent -L --output ~/.docker/cli-plugins/docker-buildx $BUILDX_URL
       - chmod a+x ~/.docker/cli-plugins/docker-buildx
+
+  pre_build:
+    commands:
+      # AWS ECR へのログイン
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
       # Docker (Build Cloud) へのログイン
       - echo "$DOCKER_PAT" | docker login --username $DOCKER_USER --password-stdin
       # クラウドビルダーの指定
@@ -29,5 +30,7 @@ phases:
 
   build:
     commands:
+      # イメージタグ
+      - IMAGE_TAG=$(echo ${CODEBUILD_RESOLVED_SOURCE_VERSION} | head -c 7)
       # コンテナイメージのビルド・AWS ECR へのプッシュ
       - docker buildx build --platform linux/amd64,linux/arm64 --push --tag "${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}" .
