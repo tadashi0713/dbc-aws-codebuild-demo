@@ -14,7 +14,7 @@ phases:
       # AWS ECR へのログイン
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
       # Docker へのログイン
-      # - echo "$DOCKER_PAT" | docker login --username $DOCKER_USER --password-stdin
+      - echo "$DOCKER_PAT" | docker login --username $DOCKER_USER --password-stdin
 
   build:
     commands:
